@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Campanha Política - Moldura</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 20px;
+      background-color: #f4f4f4;
+    }
+    .container {
+      margin: 0 auto;
+      max-width: 600px;
+      background-color: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+    canvas {
+      border: 2px solid #000;
+      margin-top: 20px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    button, input {
+      margin-top: 20px;
+      padding: 10px 20px;
+      font-size: 16px;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Adicione sua moldura de campanha!</h1>
+    <input type="file" id="uploadFoto" accept="image/*">
+    <canvas id="canvas" width="500" height="500"></canvas>
+    <button id="baixar">Baixar Imagem</button>
+  </div>
+
+  <script>
+    const uploadFoto = document.getElementById('uploadFoto');
+    const canvas = document.getElementById('canvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Caminho para a imagem da moldura, que está na pasta 'images'
+    const moldura = new Image();
+    moldura.src = 'images/molduraaa.png'; // Atualizado para 'molduraaa.png'
+
+    uploadFoto.addEventListener('change', function(event) {
+      const foto = new Image();
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        foto.src = e.target.result;
+        foto.onload = function() {
+          // Limpa o canvas antes de desenhar
+          ctx.clearRect(0, 0, canvas.width, canvas.height);
+          // Desenha a foto no canvas
+          ctx.drawImage(foto, 0, 0, canvas.width, canvas.height);
+          // Desenha a moldura por cima
+          ctx.drawImage(moldura, 0, 0, canvas.width, canvas.height);
+        }
+      };
+      reader.readAsDataURL(event.target.files[0]);
+    });
+
+    // Função para baixar a imagem final com a moldura
+    document.getElementById('baixar').addEventListener('click', function() {
+      const link = document.createElement('a');
+      link.download = 'foto-com-moldura.png';
+      link.href = canvas.toDataURL();
+      link.click();
+    });
+  </script>
+</body>
+</html>
