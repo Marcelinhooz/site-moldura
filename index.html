@@ -5,70 +5,116 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Campanha Política - Moldura</title>
   <style>
+    /* Estilos Globais */
     body {
       font-family: Arial, sans-serif;
       text-align: center;
       padding: 20px;
       background-color: #f4f4f4;
+      margin: 0;
     }
+
+    /* Container Centralizado */
     .container {
       margin: 0 auto;
-      max-width: 600px;
+      max-width: 500px;
       background-color: white;
       padding: 20px;
-      border-radius: 8px;
+      border-radius: 10px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
     }
+
+    /* Título */
+    h1 {
+      font-size: 24px;
+      margin-bottom: 20px;
+    }
+
+    /* Canvas Responsivo */
     canvas {
       border: 2px solid #000;
       margin-top: 20px;
+      width: 100%; /* Faz o canvas ocupar toda a largura da tela */
+      height: auto;
       display: block;
-      margin-left: auto;
-      margin-right: auto;
     }
-    button, input {
+
+    /* Botões e Inputs */
+    button, input[type="file"] {
       margin-top: 20px;
-      padding: 10px 20px;
+      padding: 12px 20px;
       font-size: 16px;
+      border-radius: 5px;
+      border: none;
+      background-color: #4CAF50;
+      color: white;
       cursor: pointer;
+    }
+
+    /* Botão quando em hover */
+    button:hover {
+      background-color: #45a049;
+    }
+
+    /* Responsividade para telas menores */
+    @media (max-width: 600px) {
+      h1 {
+        font-size: 20px;
+      }
+
+      button, input[type="file"] {
+        width: 100%;
+        padding: 15px;
+      }
     }
   </style>
 </head>
 <body>
   <div class="container">
     <h1>Adicione sua moldura de campanha!</h1>
+    
+    <!-- Upload de Imagem -->
     <input type="file" id="uploadFoto" accept="image/*">
-    <canvas id="canvas" width="500" height="500"></canvas>
+
+    <!-- Canvas onde a imagem e a moldura serão renderizadas -->
+    <canvas id="canvas"></canvas>
+
+    <!-- Botão para baixar a imagem final -->
     <button id="baixar">Baixar Imagem</button>
   </div>
 
   <script>
+    // Elementos do DOM
     const uploadFoto = document.getElementById('uploadFoto');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
     
-    // Caminho para a imagem da moldura, que está na pasta 'images'
+    // Carregar a moldura
     const moldura = new Image();
-    moldura.src = './molduraaa.png'; // Atualizado para 'molduraaa.png'
+    moldura.src = 'images/molduraaa.png'; // Atualize o caminho conforme o nome e local da sua moldura
 
+    // Ajustar tamanho do canvas conforme a foto
     uploadFoto.addEventListener('change', function(event) {
       const foto = new Image();
       const reader = new FileReader();
       reader.onload = function(e) {
         foto.src = e.target.result;
         foto.onload = function() {
-          // Limpa o canvas antes de desenhar
-          ctx.clearRect(0, 0, canvas.width, canvas.height);
-          // Desenha a foto no canvas
+          // Ajustar a largura e altura do canvas de acordo com a imagem carregada
+          canvas.width = foto.width;
+          canvas.height = foto.height;
+          
+          // Desenhar a foto no canvas
           ctx.drawImage(foto, 0, 0, canvas.width, canvas.height);
-          // Desenha a moldura por cima
+          
+          // Desenhar a moldura por cima
           ctx.drawImage(moldura, 0, 0, canvas.width, canvas.height);
         }
       };
       reader.readAsDataURL(event.target.files[0]);
     });
 
-    // Função para baixar a imagem final com a moldura
+    // Função para baixar a imagem com a moldura
     document.getElementById('baixar').addEventListener('click', function() {
       const link = document.createElement('a');
       link.download = 'foto-com-moldura.png';
