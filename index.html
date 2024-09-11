@@ -89,12 +89,12 @@
     const uploadFoto = document.getElementById('uploadFoto');
     const canvas = document.getElementById('canvas');
     const ctx = canvas.getContext('2d');
-    
+
     // Carregar a moldura com o caminho atualizado
     const moldura = new Image();
-    moldura.src = './molduraaa.png'; // Caminho da moldura no mesmo diretório do index.html
+    moldura.src = './moldura.png'; // Caminho da moldura no mesmo diretório do index.html
 
-    // Verificação de erro no carregamento da imagem
+    // Verificação de erro no carregamento da moldura
     moldura.onerror = function() {
       alert('A moldura não pôde ser carregada. Verifique o caminho do arquivo.');
     };
@@ -127,6 +127,9 @@
       // Desenhar a imagem no canvas com o crop proporcional
       ctx.clearRect(0, 0, canvas.width, canvas.height);
       ctx.drawImage(foto, posX, posY, novaLargura, novaAltura);
+
+      // Após desenhar a imagem, aplicar a moldura
+      ctx.drawImage(moldura, 0, 0, canvasLargura, canvasAltura);
     }
 
     // Ajustar o tamanho da imagem e aplicar a moldura
@@ -138,11 +141,6 @@
         foto.onload = function() {
           // Ajustar a imagem para caber dentro do 1080x1080 sem esticar
           ajustarImagemProporcional(foto);
-          
-          // Desenhar a moldura por cima
-          moldura.onload = function() {
-            ctx.drawImage(moldura, 0, 0, canvas.width, canvas.height);
-          };
         };
       };
       reader.readAsDataURL(event.target.files[0]);
