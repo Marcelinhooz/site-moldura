@@ -92,7 +92,12 @@
     
     // Carregar a moldura com o caminho atualizado
     const moldura = new Image();
-    moldura.src = '/molduraaa.png'; // Caminho atualizado para a moldura
+    moldura.src = './molduraaa.png'; // Caminho da moldura no mesmo diretório do index.html
+
+    // Verificação de erro no carregamento da imagem
+    moldura.onerror = function() {
+      alert('A moldura não pôde ser carregada. Verifique o caminho do arquivo.');
+    };
 
     // Função para fazer o crop da imagem
     function ajustarImagemProporcional(foto) {
