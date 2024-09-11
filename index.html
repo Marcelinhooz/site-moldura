@@ -78,7 +78,7 @@
     <input type="file" id="uploadFoto" accept="image/*">
 
     <!-- Canvas onde a imagem e a moldura serão renderizadas -->
-    <canvas id="canvas"></canvas>
+    <canvas id="canvas" width="1080" height="1080"></canvas>
 
     <!-- Botão para baixar a imagem final -->
     <button id="baixar">Baixar Imagem</button>
@@ -94,23 +94,51 @@
     const moldura = new Image();
     moldura.src = './molduraaa.png'; // Atualize o caminho conforme o nome e local da sua moldura
 
-    // Ajustar tamanho do canvas conforme a foto
+    // Função para fazer o crop da imagem
+    function ajustarImagemProporcional(foto) {
+      const canvasLargura = 1080;
+      const canvasAltura = 1080;
+      const proporcaoCanvas = canvasLargura / canvasAltura;
+
+      // Tamanho original da imagem carregada
+      const proporcaoImagem = foto.width / foto.height;
+
+      let novaLargura, novaAltura, posX, posY;
+
+      if (proporcaoImagem > proporcaoCanvas) {
+        // A imagem é mais larga do que o canvas, então ajustamos pela altura
+        novaAltura = canvasAltura;
+        novaLargura = foto.width * (canvasAltura / foto.height);
+        posX = -(novaLargura - canvasLargura) / 2;
+        posY = 0;
+      } else {
+        // A imagem é mais alta, ajustamos pela largura
+        novaLargura = canvasLargura;
+        novaAltura = foto.height * (canvasLargura / foto.width);
+        posX = 0;
+        posY = -(novaAltura - canvasAltura) / 2;
+      }
+
+      // Desenhar a imagem no canvas com o crop proporcional
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(foto, posX, posY, novaLargura, novaAltura);
+    }
+
+    // Ajustar o tamanho da imagem e aplicar a moldura
     uploadFoto.addEventListener('change', function(event) {
       const foto = new Image();
       const reader = new FileReader();
       reader.onload = function(e) {
         foto.src = e.target.result;
         foto.onload = function() {
-          // Ajustar a largura e altura do canvas de acordo com a imagem carregada
-          canvas.width = foto.width;
-          canvas.height = foto.height;
-          
-          // Desenhar a foto no canvas
-          ctx.drawImage(foto, 0, 0, canvas.width, canvas.height);
+          // Ajustar a imagem para caber dentro do 1080x1080 sem esticar
+          ajustarImagemProporcional(foto);
           
           // Desenhar a moldura por cima
-          ctx.drawImage(moldura, 0, 0, canvas.width, canvas.height);
-        }
+          moldura.onload = function() {
+            ctx.drawImage(moldura, 0, 0, canvas.width, canvas.height);
+          };
+        };
       };
       reader.readAsDataURL(event.target.files[0]);
     });
